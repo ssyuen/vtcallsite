@@ -96,6 +96,7 @@ export const createCar = /* GraphQL */ `
     createCar(input: $input, condition: $condition) {
       id
       make
+      blurb
       store {
         id
         name
@@ -137,6 +138,7 @@ export const updateCar = /* GraphQL */ `
     updateCar(input: $input, condition: $condition) {
       id
       make
+      blurb
       store {
         id
         name
@@ -178,6 +180,7 @@ export const deleteCar = /* GraphQL */ `
     deleteCar(input: $input, condition: $condition) {
       id
       make
+      blurb
       store {
         id
         name

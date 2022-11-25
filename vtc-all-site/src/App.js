@@ -8,6 +8,7 @@ import { Login } from './components/LoginPage';
 
 import { Amplify, API } from 'aws-amplify'
 import awsconfig from './aws-exports'
+import { IndividualCarPage } from './components/IndividualCarPage';
 
 Amplify.configure(awsconfig)
 
@@ -21,6 +22,7 @@ function App() {
         <Route path={'/map'} element={<Map />}></Route>
         <Route path={'/login'} element={<Login />}></Route>
         <Route path={'/admin'} element={isAuth() ? <Admin /> : <Navigate to={'/login'} />}></Route>
+        <Route path={'/carListings/:id'} element={<IndividualCarPage />}></Route>
       </Routes>
     </BrowserRouter>
 

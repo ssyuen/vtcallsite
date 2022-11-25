@@ -14,6 +14,8 @@ type Car @model {
   id: ID!
   make: String!
   store: Store @belongsTo
+  blurb: String!
+  image: String!
   makeDate: String!
   color: String
   listingPrice: String!
