@@ -1,0 +1,39 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplify827fc07112914-staging-23336-authRole",
+      "UnauthRoleArn": "arn:aws:iam::602723001742:role/amplify-amplify827fc07112914-staging-23336-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::602723001742:role/amplify-amplify827fc07112914-staging-23336-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-amplify827fc07112914-staging-23336-deployment",
+      "UnauthRoleName": "amplify-amplify827fc07112914-staging-23336-unauthRole",
+      "StackName": "amplify-amplify827fc07112914-staging-23336",
+      "StackId": "arn:aws:cloudformation:us-east-2:602723001742:stack/amplify-amplify827fc07112914-staging-23336/906f90f0-6c69-11ed-9246-02c39ddee1d4",
+      "AmplifyAppId": "d3rd0rpjm5pftc"
+    },
+    "categories": {
+      "function": {
+        "vtcapi": {
+          "deploymentBucketName": "amplify-amplify827fc07112914-staging-23336-deployment",
+          "s3Key": "amplify-builds/vtcapi-432f3962336345424263-build.zip"
+        },
+        "vtcallsitef28e9fa8": {
+          "deploymentBucketName": "amplify-amplify827fc07112914-staging-23336-deployment",
+          "s3Key": "amplify-builds/vtcallsitef28e9fa8-7a68514b506c4d50694a-build.zip"
+        },
+        "vtcCarApi": {
+          "deploymentBucketName": "amplify-amplify827fc07112914-staging-23336-deployment",
+          "s3Key": "amplify-builds/vtcCarApi-554f3154434e626e6e55-build.zip"
+        }
+      },
+      "storage": {
+        "vtcdb": {}
+      },
+      "api": {
+        "api602a2737": {},
+        "vtccarapi": {},
+        "vtcallsiteGraphqlAPI": {}
+      }
+    }
+  }
+}

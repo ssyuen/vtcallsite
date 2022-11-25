@@ -1,0 +1,10 @@
+{
+  "resourceName": "vtcdb",
+  "tableName": "cars",
+  "partitionKey": {
+    "fieldName": "make_id",
+    "fieldType": "number"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}

@@ -6,8 +6,14 @@ import { Admin } from './components/AdminPage';
 import { isAuth } from './utils';
 import { Login } from './components/LoginPage';
 
+import { Amplify, API } from 'aws-amplify'
+import awsconfig from './aws-exports'
+
+Amplify.configure(awsconfig)
+
 function App() {
   return (
+
     <BrowserRouter>
       <Routes>
         <Route path={'/'} element={<Home />}></Route>

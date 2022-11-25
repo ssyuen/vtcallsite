@@ -2,15 +2,20 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-// We have a strong and committed sales staff with many years of
-//           experience satisfying our customers' needs. Feel free to browse
-//           our inventory online, request more information about vehicles, set
-//           up a test drive or inquire about financing!
+import Image from "react-bootstrap/Image";
+
 export const NavBar = () => {
   return (
     <Navbar bg="light" expand="lg">
       <Container>
-        <Navbar.Brand href="#home">Valley Trucking Centers</Navbar.Brand>
+        <Navbar.Brand href="/">
+          <Image
+            fluid={true}
+            style={{ width: "25vh" }}
+            src="/assets/imgs/valley_logo.png"
+            alt="valley logo"
+          />
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
