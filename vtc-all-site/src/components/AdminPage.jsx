@@ -210,6 +210,12 @@ export const Admin = () => {
                         name: faker.address.city(),
                         xCoord: faker.address.latitude(),
                         yCoord: faker.address.longitude(),
+                        address:
+                          faker.address.streetAddress(true) +
+                          " " +
+                          faker.address.cityName() +
+                          ", " +
+                          faker.address.state(),
                       },
                     })
                   );
@@ -238,7 +244,7 @@ export const Admin = () => {
                 }
               >
                 <Button
-                  disabled={stores.length === 0}
+                  // disabled={stores.length === 0}
                   variant="danger"
                   onClick={clearAllStores}
                 >
@@ -318,6 +324,7 @@ export const Admin = () => {
                         ), // '2026-05-16T02:22:53.002Z'
                         blurb: faker.lorem.paragraph(),
                         image: faker.image.transport("", "", true),
+                        trending: Math.random() < 0.5,
                         color: faker.vehicle.color(),
                         listingPrice: faker.commerce.price(0, 1000000),
                       },
@@ -370,6 +377,7 @@ export const Admin = () => {
                   <tr>
                     <th>ID #</th>
                     <th>Location Name</th>
+                    <th>Address</th>
                     <th>X Coordinates</th>
                     <th>Y Coordinates</th>
                   </tr>
@@ -391,6 +399,7 @@ export const Admin = () => {
                               {store.id}
                             </td>
                             <td>{store.name}</td>
+                            <td>{store.address}</td>
                             <td>{store.xCoord}</td>
                             <td>{store.yCoord}</td>
                           </tr>
@@ -427,7 +436,7 @@ export const Admin = () => {
                             id={owners.id}
                             onClick={selectOwner}
                             className={
-                              owners.id === carToDelete ? "bg-warning" : ""
+                              owners.id === ownerToDelete ? "bg-warning" : ""
                             }
                           >
                             {owners.id}
@@ -458,6 +467,7 @@ export const Admin = () => {
                     <th>Color</th>
                     <th>Listing $</th>
                     <th>Blurb</th>
+                    <th>Image URL</th>
                     <th>Owners</th>
                   </tr>
                 </thead>
@@ -482,6 +492,7 @@ export const Admin = () => {
                           <td>{car.color}</td>
                           <td>{car.listingPrice}</td>
                           <td>{car.blurb}</td>
+                          <td>{car.image}</td>
                           {/* <td>{car.owners}</td> */}
                         </tr>
                       );

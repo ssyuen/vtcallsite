@@ -8,6 +8,7 @@ import { incrementSiteVisits } from "../utils";
 import { API } from "aws-amplify";
 import { useState, useEffect } from "react";
 import { listCars, listStores } from "../graphql/queries";
+import Image from "react-bootstrap/esm/Image";
 export const Home = () => {
   const [carsFetched, setCarsFetched] = useState(false);
   const [hotCars, setHotCars] = useState([]);
@@ -31,48 +32,53 @@ export const Home = () => {
         <NavBar />
       </Row>
 
-      <Row className="text-center g-0">
-        <Col>
-          <h1>Number of Site Visits</h1>
-          <p>{incrementSiteVisits()}</p>
-          <Row>
+      <Container>
+        <Row className="text-center">
+          <Col>
+            <h1>Number of Site Visits</h1>
+            <p>{incrementSiteVisits()}</p>
+            <Row>
+              <p>
+                We have a strong and committed sales staff with many years of
+                experience satisfying our customers' needs. Feel free to browse
+                our inventory online, request more information about vehicles,
+                set up a test drive or inquire about financing!
+              </p>
+            </Row>
+            <Row>
+              <Col>
+                <Button href="/inventoryFeed">All Our Inventory</Button>
+              </Col>
+              <Col>
+                <Button variant="success" href="/map">
+                  Store Map Locations
+                </Button>
+              </Col>
+            </Row>
             <p>
-              We have a strong and committed sales staff with many years of
-              experience satisfying our customers' needs. Feel free to browse
-              our inventory online, request more information about vehicles, set
-              up a test drive or inquire about financing!
+              Our selection of inventory ranges from small consumer vehicles to
+              commercial vehicles!
             </p>
-          </Row>
-          <Row>
-            <Col>
-              <Button href="/inventoryFeed">All Our Inventory</Button>
-            </Col>
-            <Col>
-              <Button href="/map">Store Map Locations</Button>
-            </Col>
-          </Row>
-          <p>
-            Our selection of inventory ranges from small consumer vehicles to
-            commercial vehicles!
-          </p>
-        </Col>
-      </Row>
-      <Row className="text-center">
-        <Col>
-          <h1 className="display-1">Hot Inventory</h1>
-        </Col>
-        <Row>
-          {/* DISPLAY DATA FROM RDS HERE */}
-          {hotCars.map((car) => {
-            return "";
-          })}
+          </Col>
         </Row>
-      </Row>
-      <Row>
-        <Col>
-          <FooterBar />
-        </Col>
-      </Row>
+
+        <Row className="text-center">
+          <Col>
+            <h1 className="display-1">Hot Inventory</h1>
+          </Col>
+          <Row>
+            {/* DISPLAY DATA FROM RDS HERE */}
+            {hotCars.map((car) => {
+              return "";
+            })}
+          </Row>
+        </Row>
+        <Row>
+          <Col>
+            <FooterBar />
+          </Col>
+        </Row>
+      </Container>
     </Container>
   );
 };

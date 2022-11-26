@@ -9,6 +9,7 @@ export const createStore = /* GraphQL */ `
     createStore(input: $input, condition: $condition) {
       id
       name
+      address
       xCoord
       yCoord
       cars {
@@ -17,6 +18,9 @@ export const createStore = /* GraphQL */ `
           make
           makeDate
           color
+          blurb
+          image
+          trending
           listingPrice
           createdAt
           updatedAt
@@ -46,6 +50,9 @@ export const updateStore = /* GraphQL */ `
           make
           makeDate
           color
+          blurb
+          image
+          trending
           listingPrice
           createdAt
           updatedAt
@@ -75,6 +82,9 @@ export const deleteStore = /* GraphQL */ `
           make
           makeDate
           color
+          blurb
+          image
+          trending
           listingPrice
           createdAt
           updatedAt
@@ -97,6 +107,8 @@ export const createCar = /* GraphQL */ `
       id
       make
       blurb
+      image
+      trending
       store {
         id
         name

@@ -12,6 +12,9 @@ export const getStore = /* GraphQL */ `
         items {
           id
           make
+          blurb
+          trending
+          image
           makeDate
           color
           listingPrice
@@ -37,6 +40,7 @@ export const listStores = /* GraphQL */ `
       items {
         id
         name
+        address
         xCoord
         yCoord
         cars {
@@ -54,6 +58,9 @@ export const getCar = /* GraphQL */ `
     getCar(id: $id) {
       id
       make
+      image
+      blurb
+      trending
       store {
         id
         name
@@ -97,6 +104,9 @@ export const listCars = /* GraphQL */ `
       items {
         id
         make
+        blurb
+        trending
+        image
         store {
           id
           name
