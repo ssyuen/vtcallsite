@@ -36,12 +36,27 @@ export const InventoryFeed = () => {
   const [makeFilter, setMakeFilter] = useState("");
   const [makeFilterInUse, setMakeFilterInUse] = useState(false);
   const [makeCars, setMakeCars] = useState([]);
+  const [makesInFilter, setMakesInFilter] = useState([]);
 
   useEffect(() => {
     if (!carsFetched) {
       fetchAllCars();
     }
   }, [carsFetched]);
+
+  const handleMakeCheck = (e) => {
+    console.log(e);
+    let tempMakeList = makesInFilter;
+
+    if (e.target.checked) {
+      tempMakeList.push(e.target.id);
+    } else {
+      const eleToRemove = tempMakeList.indexOf(e.target.id);
+      tempMakeList.splice(eleToRemove, 1);
+    }
+
+    setMakesInFilter(tempMakeList);
+  };
 
   const fetchAllCars = async () => {
     setCarsFetched(false);
@@ -62,9 +77,7 @@ export const InventoryFeed = () => {
   const filterByYear = (e) => {
     setYearFilter(e.target.value);
   };
-  const filterByMake = (e) => {
-    setMakeFilter(e.target.value);
-  };
+
   const manualListingPriceSetter = (e) => {
     console.log(e);
     if (e.key === "Enter") {
@@ -81,8 +94,14 @@ export const InventoryFeed = () => {
     if (cars.length > 0) {
       cars.forEach((car) => {
         if (
-          Number(car.listingPrice) < Number(listingPrice) ||
-          Number(car.listingPrice) === Number(listingPrice)
+          Number(car.listingPrice) <
+            Number(
+              manualListPriceInputInUse ? manualListPriceInput : listingPrice
+            ) ||
+          Number(car.listingPrice) ===
+            Number(
+              manualListPriceInputInUse ? manualListPriceInput : listingPrice
+            )
         ) {
           carsToShow.push(car);
         }
@@ -92,12 +111,15 @@ export const InventoryFeed = () => {
     setListingPriceCars(carsToShow);
 
     let tempCars = carsToShow;
+
     // CHECK IF OTHER FILTERS ARE IN USE
     if (yearFilterInUse) {
-      tempCars.concat(yearCars);
+      let intersection = tempCars.filter((car) => yearCars.includes(car));
+      tempCars = intersection;
     }
     if (makeFilterInUse) {
-      tempCars.concat(makeCars);
+      let intersection = tempCars.filter((car) => makeCars.includes(car));
+      tempCars = intersection;
     }
     let removedDuplicates = new Set(tempCars);
     tempCars = Array.from(removedDuplicates);
@@ -112,30 +134,31 @@ export const InventoryFeed = () => {
     let carsToShow = [];
     if (cars.length > 0) {
       cars.forEach((car) => {
-        if (
-          Number(car.listingPrice) < Number(listingPrice) ||
-          Number(car.listingPrice) === Number(listingPrice)
-        ) {
+        if (makesInFilter.includes(car.make)) {
           carsToShow.push(car);
         }
       });
     }
 
-    setListingPriceCars(carsToShow);
+    setMakeCars(carsToShow);
 
     let tempCars = carsToShow;
     // CHECK IF OTHER FILTERS ARE IN USE
     if (yearFilterInUse) {
-      tempCars.concat(yearCars);
+      let intersection = tempCars.filter((car) => yearCars.includes(car));
+      tempCars = intersection;
     }
-    if (makeFilterInUse) {
-      tempCars.concat(makeCars);
+    if (listingPriceFilterInUse) {
+      let intersection = tempCars.filter((car) =>
+        listingPriceCars.includes(car)
+      );
+      tempCars = intersection;
     }
     let removedDuplicates = new Set(tempCars);
     tempCars = Array.from(removedDuplicates);
 
     setFilteredCars(tempCars);
-    setListingPriceFilterInUse(true);
+    setMakeFilterInUse(true);
     setFilterInUse(true);
   };
 
@@ -145,7 +168,7 @@ export const InventoryFeed = () => {
     if (cars.length > 0) {
       cars.forEach((car) => {
         if (
-          new Date(car.makeDate).getFullYear() < yearFilter ||
+          new Date(car.makeDate).getFullYear() > yearFilter ||
           new Date(car.makeDate).getFullYear() === yearFilter
         ) {
           carsToShow.push(car);
@@ -158,10 +181,14 @@ export const InventoryFeed = () => {
     let tempCars = carsToShow;
     // CHECK IF OTHER FILTERS ARE IN USE
     if (listingPriceFilterInUse) {
-      tempCars.concat(listingPriceCars);
+      let intersection = tempCars.filter((car) =>
+        listingPriceCars.includes(car)
+      );
+      tempCars = intersection;
     }
     if (makeFilterInUse) {
-      tempCars.concat(makeCars);
+      let intersection = tempCars.filter((car) => makeCars.includes(car));
+      tempCars = intersection;
     }
     let removedDuplicates = new Set(tempCars);
     tempCars = Array.from(removedDuplicates);
@@ -176,23 +203,18 @@ export const InventoryFeed = () => {
     let tempCars = [];
     if (makeFilterInUse && yearFilterInUse) {
       tempCars = makeCars;
-      tempCars.concat(yearCars);
-      let removedDuplicates = new Set(tempCars);
-      tempCars = Array.from(removedDuplicates);
+      let intersection = tempCars.filter((car) => yearCars.includes(car));
+      setFilteredCars(intersection);
+    } else if (makeFilterInUse) {
+      tempCars = makeCars;
+      setFilteredCars(tempCars);
+    } else if (yearFilterInUse) {
+      tempCars = yearCars;
       setFilteredCars(tempCars);
     } else {
       // NO FILTERS REMAINING
       setFilterInUse(false);
       setFilteredCars([]);
-    }
-
-    if (makeFilterInUse) {
-      tempCars = makeCars;
-      setFilteredCars(tempCars);
-    }
-    if (yearFilterInUse) {
-      tempCars = yearCars;
-      setFilteredCars(tempCars);
     }
 
     setListingPriceFilterInUse(false);
@@ -202,23 +224,20 @@ export const InventoryFeed = () => {
     let tempCars = [];
     if (listingPriceFilterInUse && yearFilterInUse) {
       tempCars = listingPriceCars;
-      tempCars.concat(yearCars);
-      let removedDuplicates = new Set(tempCars);
-      tempCars = Array.from(removedDuplicates);
+
+      let intersection = tempCars.filter((car) => yearCars.includes(car));
+
+      setFilteredCars(intersection);
+    } else if (listingPriceFilterInUse) {
+      tempCars = listingPriceCars;
+      setFilteredCars(tempCars);
+    } else if (yearFilterInUse) {
+      tempCars = yearCars;
       setFilteredCars(tempCars);
     } else {
       // NO FILTERS REMAINING
       setFilterInUse(false);
       setFilteredCars([]);
-    }
-
-    if (listingPriceFilterInUse) {
-      tempCars = listingPriceCars;
-      setFilteredCars(tempCars);
-    }
-    if (yearFilterInUse) {
-      tempCars = yearCars;
-      setFilteredCars(tempCars);
     }
 
     setMakeFilterInUse(false);
@@ -228,23 +247,18 @@ export const InventoryFeed = () => {
     let tempCars = [];
     if (listingPriceFilterInUse && makeFilterInUse) {
       tempCars = listingPriceCars;
-      tempCars.concat(yearCars);
-      let removedDuplicates = new Set(tempCars);
-      tempCars = Array.from(removedDuplicates);
+      let intersection = tempCars.filter((car) => makeCars.includes(car));
+      setFilteredCars(intersection);
+    } else if (makeFilterInUse) {
+      tempCars = makeCars;
+      setFilteredCars(tempCars);
+    } else if (listingPriceFilterInUse) {
+      tempCars = listingPriceCars;
       setFilteredCars(tempCars);
     } else {
       // NO FILTERS REMAINING
       setFilterInUse(false);
       setFilteredCars([]);
-    }
-
-    if (makeFilterInUse) {
-      tempCars = makeCars;
-      setFilteredCars(tempCars);
-    }
-    if (yearFilterInUse) {
-      tempCars = yearCars;
-      setFilteredCars(tempCars);
     }
 
     setYearFilterInUse(false);
@@ -275,7 +289,12 @@ export const InventoryFeed = () => {
             <h5>Listing Price</h5>
             <Form onSubmit={(e) => e.preventDefault()}>
               <Form.Label>
-                Current Filter: {currencyFormatter.format(listingPrice)}
+                Current Filter:
+                {currencyFormatter.format(
+                  manualListPriceInputInUse
+                    ? manualListPriceInput
+                    : listingPrice
+                )}
               </Form.Label>
               <Form.Control
                 type="number"
@@ -297,7 +316,11 @@ export const InventoryFeed = () => {
               <Button className="mx-3" onClick={applyListingFilter}>
                 Apply Listing Price Filter
               </Button>
-              <Button onClick={resetListingFilter} variant="danger">
+              <Button
+                onClick={resetListingFilter}
+                disabled={!listingPriceFilterInUse}
+                variant="danger"
+              >
                 Remove Listing Price Filter
               </Button>
             </Form>
@@ -305,28 +328,34 @@ export const InventoryFeed = () => {
           <Row className="mt-3">
             <h5>Make</h5>
             <Form onSubmit={(e) => e.preventDefault()}>
-              <Form.Label>Current Filter: {yearFilter}</Form.Label>
-              <Form.Control
-                type="number"
-                max={1000000}
-                min={0}
-                onChange={manualListingPriceSetter}
-                value={
-                  manualListPriceInputInUse
-                    ? manualListPriceInput
-                    : listingPrice
-                }
-              ></Form.Control>
-              <Form.Range
-                onChange={filterByListingPrice}
-                value={listingPrice}
-                max={1000000}
-                min={0}
-              />
-              <Button className="mx-3" onClick={applyMakeFilter}>
+              {/* FOR ALL UNIQUE MAKES, FORM A FILTER */}
+              {[
+                ...new Set(
+                  cars
+                    .map((car) => car.make)
+                    .map((make) => {
+                      return (
+                        <Form.Check
+                          type="checkbox"
+                          label={make}
+                          id={make}
+                          onClick={handleMakeCheck}
+                        />
+                      );
+                    })
+                ),
+              ]}
+
+              {/* <Form.Check type={typ/> */}
+              <Button className="mx-3 mt-3" onClick={applyMakeFilter}>
                 Apply Make Filter
               </Button>
-              <Button onClick={resetMakeFilter} variant="danger">
+              <Button
+                className="mt-3"
+                onClick={resetMakeFilter}
+                disabled={!makeFilterInUse}
+                variant="danger"
+              >
                 Remove Make Filter
               </Button>
             </Form>
@@ -350,6 +379,7 @@ export const InventoryFeed = () => {
               <Button
                 className=" mt-3"
                 onClick={resetYearFilter}
+                disabled={!yearFilterInUse}
                 variant="danger"
               >
                 Remove Year Filter
@@ -368,6 +398,9 @@ export const InventoryFeed = () => {
                         <Card.Img variant="top" src={car.image} />
                         <Card.Body>
                           <Card.Title>
+                            {car.trending
+                              ? String.fromCodePoint("0x1F525")
+                              : ""}{" "}
                             {car.make} - {new Date(car.makeDate).getFullYear()}
                           </Card.Title>
                           <Card.Subtitle>
@@ -400,6 +433,9 @@ export const InventoryFeed = () => {
                         <Card.Img variant="top" src={car.image} />
                         <Card.Body>
                           <Card.Title>
+                            {car.trending
+                              ? String.fromCodePoint("0x1F525")
+                              : ""}
                             {car.make} - {new Date(car.makeDate).getFullYear()}
                           </Card.Title>
                           <Card.Subtitle>

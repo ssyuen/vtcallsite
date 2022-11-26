@@ -9,6 +9,8 @@ import { API } from "aws-amplify";
 import { useState, useEffect } from "react";
 import { listCars, listStores } from "../graphql/queries";
 import Image from "react-bootstrap/esm/Image";
+import Card from "react-bootstrap/Card";
+import { Link } from "react-router-dom";
 export const Home = () => {
   const [carsFetched, setCarsFetched] = useState(false);
   const [hotCars, setHotCars] = useState([]);
@@ -18,7 +20,10 @@ export const Home = () => {
       setCarsFetched(true);
     }
   }, [carsFetched]);
-
+  const currencyFormatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
   const fetchCars = async () => {
     const response = await API.graphql({ query: listCars });
     const carsFromApi = response.data.listCars.items;
@@ -55,7 +60,7 @@ export const Home = () => {
                 </Button>
               </Col>
             </Row>
-            <p>
+            <p className="mt-3">
               Our selection of inventory ranges from small consumer vehicles to
               commercial vehicles!
             </p>
@@ -67,9 +72,38 @@ export const Home = () => {
             <h1 className="display-1">Hot Inventory</h1>
           </Col>
           <Row>
-            {/* DISPLAY DATA FROM RDS HERE */}
             {hotCars.map((car) => {
-              return "";
+              console.log(car);
+              return car.trending ? (
+                <Col md={3}>
+                  <Card className="m-3" style={{ height: "40rem" }}>
+                    <Card.Img variant="top" src={car.image} />
+                    <Card.Body>
+                      <Card.Title>
+                        {String.fromCodePoint("0x1F525")} {car.make} -{" "}
+                        {new Date(car.makeDate).getFullYear()}
+                      </Card.Title>
+                      <Card.Subtitle>
+                        {currencyFormatter.format(car.listingPrice)}
+                      </Card.Subtitle>
+                      <Card.Text>{car.blurb}</Card.Text>
+                      <Link
+                        className="link"
+                        to={{
+                          pathname: `/carListings/${car.id}`,
+                        }}
+                        state={car}
+                      >
+                        <Button variant="info" onClick={() => console.log(car)}>
+                          Check Listing
+                        </Button>
+                      </Link>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ) : (
+                ""
+              );
             })}
           </Row>
         </Row>

@@ -468,6 +468,7 @@ export const Admin = () => {
                     <th>Listing $</th>
                     <th>Blurb</th>
                     <th>Image URL</th>
+                    <th>Trending</th>
                     <th>Owners</th>
                   </tr>
                 </thead>
@@ -475,6 +476,7 @@ export const Admin = () => {
                   <tbody>
                     {/* loop over rows here from fetch all cars */}
                     {cars.map((car) => {
+                      console.log(car);
                       return (
                         <tr>
                           <td
@@ -493,6 +495,7 @@ export const Admin = () => {
                           <td>{car.listingPrice}</td>
                           <td>{car.blurb}</td>
                           <td>{car.image}</td>
+                          <td>{car.trending.toString()}</td>
                           {/* <td>{car.owners}</td> */}
                         </tr>
                       );
