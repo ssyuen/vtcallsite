@@ -19,6 +19,7 @@ import { faker } from "@faker-js/faker";
 import Tooltip from "react-bootstrap/Tooltip";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Spinner from "react-bootstrap/Spinner";
+import _ from "lodash";
 
 export const Admin = () => {
   // const gqlCreateCar = ()_
@@ -179,6 +180,96 @@ export const Admin = () => {
     fetchAllCars();
   };
 
+  const handleFullSchemaGenerator = async () => {
+    // GENERATE STORE FIRST
+    await API.graphql(
+      graphqlOperation(createStore, {
+        input: {
+          name: faker.address.city(),
+          xCoord: faker.address.latitude(),
+          yCoord: faker.address.longitude(),
+          address:
+            faker.address.streetAddress(true) +
+            " " +
+            faker.address.cityName() +
+            ", " +
+            faker.address.state(),
+        },
+      })
+    );
+    fetchAllStores();
+
+    // THEN GET RANDOM EXISTING STORE ID
+    // TO USE TO CONNECT TO NEW CAR
+    const store = _.sample(stores);
+
+    // IF THERE ARE ANY CARS, PULL A RANDOM ONE
+    // ADD TO OWNER CAR HISTORY
+    let car = {};
+    if (cars.length > 0) {
+      car = _.sample(cars);
+    } else {
+      await API.graphql(
+        graphqlOperation(createCar, {
+          input: {
+            make: faker.vehicle.model(),
+            makeDate: faker.date.between(
+              "2020-01-01T00:00:00.000Z",
+              "2030-01-01T00:00:00.000Z"
+            ), // '2026-05-16T02:22:53.002Z'
+            blurb: faker.lorem.paragraph(),
+            image: faker.image.transport("", "", true),
+            trending: Math.random() < 0.5,
+            color: faker.vehicle.color(),
+            store: store,
+
+            listingPrice: faker.commerce.price(0, 1000000),
+          },
+        })
+      );
+      fetchAllCars();
+      car = _.sample(cars);
+    }
+
+    // GENERATE OWNER
+    await API.graphql(
+      graphqlOperation(createOwner, {
+        input: {
+          firstName: faker.name.firstName(),
+          lastName: faker.name.lastName(),
+          phoneNumber: faker.phone.number(),
+          carHistory: [car],
+        },
+      })
+    );
+    fetchAllOwners();
+
+    // PULL RANDOM EXISTING OWNER ID
+    // TO USE TO CONNECT TO NEW CAR
+    const owner = _.sample(owners);
+    // GENERATE CAR
+    await API.graphql(
+      graphqlOperation(createCar, {
+        input: {
+          make: faker.vehicle.model(),
+          makeDate: faker.date.between(
+            "2020-01-01T00:00:00.000Z",
+            "2030-01-01T00:00:00.000Z"
+          ), // '2026-05-16T02:22:53.002Z'
+          blurb: faker.lorem.paragraph(),
+          image: faker.image.transport("", "", true),
+          trending: Math.random() < 0.5,
+          color: faker.vehicle.color(),
+          store: store,
+          owners: [owner],
+          listingPrice: faker.commerce.price(0, 1000000),
+        },
+      })
+    );
+    fetchAllCars();
+    //
+  };
+
   return (
     <Container fluid={true}>
       <Row>
@@ -190,7 +281,9 @@ export const Admin = () => {
       </Row>
       <Row>
         <Col>
-          <Button>Generate 5 random items</Button>
+          <Button onClick={handleFullSchemaGenerator}>
+            Generate one of each!
+          </Button>
         </Col>
       </Row>
       <Row>

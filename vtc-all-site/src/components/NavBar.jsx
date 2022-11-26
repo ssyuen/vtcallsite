@@ -3,8 +3,20 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Image from "react-bootstrap/Image";
+import { useAuthenticator, Button, Heading, View } from "@aws-amplify/ui-react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export const NavBar = () => {
+  const { route, signOut } = useAuthenticator((context) => [
+    context.route,
+    context.signOut,
+  ]);
+  const navigate = useNavigate();
+
+  const logout = () => {
+    signOut();
+    navigate("/login");
+  };
   return (
     <Navbar bg="light" expand="lg">
       <Container>
@@ -23,7 +35,14 @@ export const NavBar = () => {
             <Nav.Link href="/inventoryFeed">Inventory</Nav.Link>
             <Nav.Link href="/map">Map</Nav.Link>
             <NavDropdown title="Settings" id="basic-nav-dropdown">
-              <NavDropdown.Item href="/login">Login</NavDropdown.Item>
+              {route !== "authenticated" ? (
+                <NavDropdown.Item href="/login">Login</NavDropdown.Item>
+              ) : (
+                <NavDropdown.Item className="bg-warning" onClick={logout}>
+                  Logout
+                </NavDropdown.Item>
+              )}
+
               <NavDropdown.Item href="/admin">Dashboard</NavDropdown.Item>
             </NavDropdown>
           </Nav>

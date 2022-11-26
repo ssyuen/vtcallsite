@@ -1,3 +1,6 @@
+import { useLocation, Navigate } from 'react-router-dom';
+import { useAuthenticator } from '@aws-amplify/ui-react';
+
 export const isAuth = () => {
     return true
     return localStorage.getItem('LOGGED_IN') ? true : false
@@ -18,4 +21,12 @@ export const incrementSiteVisits = () => {
         window.localStorage.setItem("totalSiteVisits", "1")
     }
     return localStorage.getItem('totalSiteVisits')
+}
+export function RequireAuth({ children }) {
+    const location = useLocation();
+    const { route } = useAuthenticator((context) => [context.route]);
+    if (route !== 'authenticated') {
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+    return children;
 }

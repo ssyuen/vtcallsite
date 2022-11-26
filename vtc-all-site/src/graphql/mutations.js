@@ -112,6 +112,7 @@ export const createCar = /* GraphQL */ `
       store {
         id
         name
+        address
         xCoord
         yCoord
         cars {
@@ -239,6 +240,9 @@ export const createOwner = /* GraphQL */ `
         items {
           id
           make
+          blurb
+          image
+          trending
           makeDate
           color
           listingPrice
