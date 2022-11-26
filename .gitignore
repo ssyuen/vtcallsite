@@ -9,7 +9,7 @@ amplify/backend/.temp
 build/
 dist/
 node_modules/
-aws-exports.js
+
 .vscode
 awsconfiguration.json
 amplifyconfiguration.json
