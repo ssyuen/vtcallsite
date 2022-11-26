@@ -181,6 +181,10 @@ export const Admin = () => {
   };
 
   const handleFullSchemaGenerator = async () => {
+    let car = {};
+    if (cars.length > 0) {
+      car = _.sample(cars);
+    }
     // GENERATE STORE FIRST
     await API.graphql(
       graphqlOperation(createStore, {
@@ -194,6 +198,7 @@ export const Admin = () => {
             faker.address.cityName() +
             ", " +
             faker.address.state(),
+          cars: cars.length > 0 ? [car.id] : [""],
         },
       })
     );
@@ -205,7 +210,7 @@ export const Admin = () => {
 
     // IF THERE ARE ANY CARS, PULL A RANDOM ONE
     // ADD TO OWNER CAR HISTORY
-    let car = {};
+    car = {};
     if (cars.length > 0) {
       car = _.sample(cars);
     } else {
@@ -221,7 +226,7 @@ export const Admin = () => {
             image: faker.image.transport("", "", true),
             trending: Math.random() < 0.5,
             color: faker.vehicle.color(),
-            store: store,
+            store: store.id,
 
             listingPrice: faker.commerce.price(0, 1000000),
           },
@@ -238,7 +243,7 @@ export const Admin = () => {
           firstName: faker.name.firstName(),
           lastName: faker.name.lastName(),
           phoneNumber: faker.phone.number(),
-          carHistory: [car],
+          carHistory: [car.id],
         },
       })
     );
@@ -261,7 +266,7 @@ export const Admin = () => {
           trending: Math.random() < 0.5,
           color: faker.vehicle.color(),
           store: store,
-          owners: [owner],
+          owners: [owner.id],
           listingPrice: faker.commerce.price(0, 1000000),
         },
       })
@@ -337,7 +342,7 @@ export const Admin = () => {
                 }
               >
                 <Button
-                  // disabled={stores.length === 0}
+                  disabled={stores.length === 0}
                   variant="danger"
                   onClick={clearAllStores}
                 >
