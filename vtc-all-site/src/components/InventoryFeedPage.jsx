@@ -22,7 +22,7 @@ export const InventoryFeed = () => {
 
   const [filteredCars, setFilteredCars] = useState([]);
 
-  const [listingPrice, setListingPrice] = useState("");
+  const [listingPrice, setListingPrice] = useState(500000);
   const [listingPriceCars, setListingPriceCars] = useState([]);
   const [listingPriceFilterInUse, setListingPriceFilterInUse] = useState(false);
   const [manualListPriceInputInUse, setManualListPriceInputInUse] =
@@ -33,10 +33,13 @@ export const InventoryFeed = () => {
   const [yearFilterInUse, setYearFilterInUse] = useState(false);
   const [yearCars, setYearCars] = useState([]);
 
-  const [makeFilter, setMakeFilter] = useState("");
   const [makeFilterInUse, setMakeFilterInUse] = useState(false);
   const [makeCars, setMakeCars] = useState([]);
   const [makesInFilter, setMakesInFilter] = useState([]);
+
+  const [trendingSwitch, setTrendingSwitch] = useState(false);
+  const [trendingSwitchInUse, setTrendingSwitchInUse] = useState(false);
+  const [trendingSwitchCars, setTrendingSwitchCars] = useState([]);
 
   useEffect(() => {
     if (!carsFetched) {
@@ -88,6 +91,73 @@ export const InventoryFeed = () => {
       setManualListPriceInputInUse(true);
     }
   };
+
+  // DIFFERS BECAUSE THIS HANDLES HANDLING AND APPLYING AT SAME  TIME
+  const handleTrendingSwitch = (e) => {
+    setTrendingSwitch(!trendingSwitch);
+
+    if (e.target.checked) {
+      let carsToShow = [];
+      if (cars.length > 0) {
+        cars.forEach((car) => {
+          if (car.trending === e.target.checked) {
+            carsToShow.push(car);
+          }
+        });
+      }
+
+      setTrendingSwitchCars(carsToShow);
+
+      let tempCars = carsToShow;
+
+      // CHECK IF OTHER FILTERS ARE IN USE
+      if (yearFilterInUse) {
+        let intersection = tempCars.filter((car) => yearCars.includes(car));
+        tempCars = intersection;
+      }
+      if (makeFilterInUse) {
+        let intersection = tempCars.filter((car) => makeCars.includes(car));
+        tempCars = intersection;
+      }
+      if (listingPriceFilterInUse) {
+        let intersection = tempCars.filter((car) =>
+          listingPriceCars.includes(car)
+        );
+        tempCars = intersection;
+      }
+      let removedDuplicates = new Set(tempCars);
+
+      tempCars = Array.from(removedDuplicates);
+
+      setFilteredCars(tempCars);
+      setTrendingSwitchInUse(true);
+      setFilterInUse(true);
+    } else {
+      if (!listingPriceFilterInUse && !makeFilterInUse && !yearFilterInUse) {
+        console.log("filters no longer in use");
+        setFilterInUse(false);
+        setFilteredCars([]);
+      } else {
+        let tempFilteredCars = cars;
+
+        let intersection = yearFilterInUse
+          ? tempFilteredCars.filter((car) => yearCars.includes(car))
+          : cars;
+
+        intersection = listingPriceFilterInUse
+          ? intersection.filter((car) => listingPriceCars.includes(car))
+          : intersection;
+
+        intersection = makeFilterInUse
+          ? intersection.filter((car) => makeCars.includes(car))
+          : intersection;
+
+        setFilteredCars(intersection);
+      }
+
+      setTrendingSwitchInUse(false);
+    }
+  };
   const applyListingFilter = () => {
     // LOOP THRU CARS
     let carsToShow = [];
@@ -121,6 +191,12 @@ export const InventoryFeed = () => {
       let intersection = tempCars.filter((car) => makeCars.includes(car));
       tempCars = intersection;
     }
+    if (trendingSwitchInUse) {
+      let intersection = tempCars.filter((car) =>
+        trendingSwitchCars.includes(car)
+      );
+      tempCars = intersection;
+    }
     let removedDuplicates = new Set(tempCars);
     tempCars = Array.from(removedDuplicates);
 
@@ -151,6 +227,12 @@ export const InventoryFeed = () => {
     if (listingPriceFilterInUse) {
       let intersection = tempCars.filter((car) =>
         listingPriceCars.includes(car)
+      );
+      tempCars = intersection;
+    }
+    if (trendingSwitchInUse) {
+      let intersection = tempCars.filter((car) =>
+        trendingSwitchCars.includes(car)
       );
       tempCars = intersection;
     }
@@ -190,6 +272,12 @@ export const InventoryFeed = () => {
       let intersection = tempCars.filter((car) => makeCars.includes(car));
       tempCars = intersection;
     }
+    if (trendingSwitchInUse) {
+      let intersection = tempCars.filter((car) =>
+        trendingSwitchCars.includes(car)
+      );
+      tempCars = intersection;
+    }
     let removedDuplicates = new Set(tempCars);
     tempCars = Array.from(removedDuplicates);
 
@@ -200,65 +288,78 @@ export const InventoryFeed = () => {
 
   // FOR RESET FUNCTIONS, REMOVE USING RESPECTIVE STATE ARRAYS FOR THEIR FILTER
   const resetListingFilter = () => {
-    let tempCars = [];
-    if (makeFilterInUse && yearFilterInUse) {
-      tempCars = makeCars;
-      let intersection = tempCars.filter((car) => yearCars.includes(car));
-      setFilteredCars(intersection);
-    } else if (makeFilterInUse) {
-      tempCars = makeCars;
-      setFilteredCars(tempCars);
-    } else if (yearFilterInUse) {
-      tempCars = yearCars;
-      setFilteredCars(tempCars);
-    } else {
-      // NO FILTERS REMAINING
+    if (!makeFilterInUse && !yearFilterInUse && !trendingSwitchInUse) {
+      console.log("filters no longer in use");
       setFilterInUse(false);
       setFilteredCars([]);
+    } else {
+      let tempFilteredCars = cars;
+
+      let intersection = yearFilterInUse
+        ? tempFilteredCars.filter((car) => yearCars.includes(car))
+        : cars;
+
+      intersection = trendingSwitchInUse
+        ? intersection.filter((car) => trendingSwitchCars.includes(car))
+        : intersection;
+
+      intersection = makeFilterInUse
+        ? intersection.filter((car) => makeCars.includes(car))
+        : intersection;
+
+      setFilteredCars(intersection);
     }
 
     setListingPriceFilterInUse(false);
   };
 
   const resetMakeFilter = () => {
-    let tempCars = [];
-    if (listingPriceFilterInUse && yearFilterInUse) {
-      tempCars = listingPriceCars;
-
-      let intersection = tempCars.filter((car) => yearCars.includes(car));
-
-      setFilteredCars(intersection);
-    } else if (listingPriceFilterInUse) {
-      tempCars = listingPriceCars;
-      setFilteredCars(tempCars);
-    } else if (yearFilterInUse) {
-      tempCars = yearCars;
-      setFilteredCars(tempCars);
-    } else {
-      // NO FILTERS REMAINING
+    if (!listingPriceFilterInUse && !yearFilterInUse && !trendingSwitchInUse) {
+      console.log("filters no longer in use");
       setFilterInUse(false);
       setFilteredCars([]);
+    } else {
+      let tempFilteredCars = cars;
+
+      let intersection = listingPriceFilterInUse
+        ? tempFilteredCars.filter((car) => listingPriceCars.includes(car))
+        : cars;
+
+      intersection = trendingSwitchInUse
+        ? intersection.filter((car) => trendingSwitchCars.includes(car))
+        : intersection;
+
+      intersection = yearFilterInUse
+        ? intersection.filter((car) => yearCars.includes(car))
+        : intersection;
+
+      setFilteredCars(intersection);
     }
 
     setMakeFilterInUse(false);
   };
 
   const resetYearFilter = () => {
-    let tempCars = [];
-    if (listingPriceFilterInUse && makeFilterInUse) {
-      tempCars = listingPriceCars;
-      let intersection = tempCars.filter((car) => makeCars.includes(car));
-      setFilteredCars(intersection);
-    } else if (makeFilterInUse) {
-      tempCars = makeCars;
-      setFilteredCars(tempCars);
-    } else if (listingPriceFilterInUse) {
-      tempCars = listingPriceCars;
-      setFilteredCars(tempCars);
-    } else {
-      // NO FILTERS REMAINING
+    if (!listingPriceFilterInUse && !makeFilterInUse && !trendingSwitchInUse) {
+      console.log("filters no longer in use");
       setFilterInUse(false);
       setFilteredCars([]);
+    } else {
+      let tempFilteredCars = cars;
+
+      let intersection = listingPriceFilterInUse
+        ? tempFilteredCars.filter((car) => listingPriceCars.includes(car))
+        : cars;
+
+      intersection = trendingSwitchInUse
+        ? intersection.filter((car) => trendingSwitchCars.includes(car))
+        : intersection;
+
+      intersection = makeFilterInUse
+        ? intersection.filter((car) => makeCars.includes(car))
+        : intersection;
+
+      setFilteredCars(intersection);
     }
 
     setYearFilterInUse(false);
@@ -284,6 +385,16 @@ export const InventoryFeed = () => {
         <Col md="3">
           <Row>
             <h3>Filters</h3>
+          </Row>
+          <Row>
+            <h5>Trending Only</h5>
+            <Form onSubmit={(e) => e.preventDefault()}>
+              <Form.Check
+                type="switch"
+                id="trending-switch"
+                onChange={handleTrendingSwitch}
+              />
+            </Form>
           </Row>
           <Row>
             <h5>Listing Price</h5>
