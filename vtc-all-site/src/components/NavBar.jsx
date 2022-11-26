@@ -1,31 +1,53 @@
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import Image from "react-bootstrap/Image";
+import { useAuthenticator, Button, Heading, View } from "@aws-amplify/ui-react";
+import { Outlet, useNavigate } from "react-router-dom";
+
 export const NavBar = () => {
-    return (
-        <div className="collapse bg-dark" id="navbarHeader">
-            <div className="container">
-                <div className="row">
-                    <div className="col-sm-8 col-md-7 py-4">
-                        <h4 className="text-white">About</h4>
-                        <p className="text-muted">
-                            We have a strong and committed sales staff with many years of
-                            experience satisfying our customers' needs. Feel free to browse
-                            our inventory online, request more information about vehicles,
-                            set up a test drive or inquire about financing!
-                        </p>
-                    </div>
-                    <div className="col-sm-4 offset-md-1 py-4">
-                        <h4 className="text-white">Links</h4>
-                        <ul className="list-unstyled">
-                            <li><a href="index.html" className="text-white">Home</a></li>
-                            <li>
-                                <a href="inventoryFeed.html" className="text-white"
-                                >Inventory</a
-                                >
-                            </li>
-                            <li><a href="map.html" className="text-white">Map</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
+  const { route, signOut } = useAuthenticator((context) => [
+    context.route,
+    context.signOut,
+  ]);
+  const navigate = useNavigate();
+
+  const logout = () => {
+    signOut();
+    navigate("/login");
+  };
+  return (
+    <Navbar bg="light" expand="lg">
+      <Container>
+        <Navbar.Brand href="/">
+          <Image
+            fluid={true}
+            style={{ width: "25vh" }}
+            src="/assets/imgs/valley_logo.png"
+            alt="valley logo"
+          />
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href="/">Home</Nav.Link>
+            <Nav.Link href="/inventoryFeed">Inventory</Nav.Link>
+            <Nav.Link href="/map">Map</Nav.Link>
+            <NavDropdown title="Settings" id="basic-nav-dropdown">
+              {route !== "authenticated" ? (
+                <NavDropdown.Item href="/login">Login</NavDropdown.Item>
+              ) : (
+                <NavDropdown.Item className="bg-warning" onClick={logout}>
+                  Logout
+                </NavDropdown.Item>
+              )}
+
+              <NavDropdown.Item href="/admin">Dashboard</NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
+};

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/admin": {
+      "name": "/admin",
+      "lambdaFunction": "vtcallsitef28e9fa8",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
